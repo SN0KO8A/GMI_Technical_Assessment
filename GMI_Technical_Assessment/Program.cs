@@ -16,7 +16,7 @@ namespace GMI_Technical_Assessment
 
             if (grid != null)
             {
-                Console.WriteLine(grid.ToString());
+                grid.DisplayMatrix();
             }
         }
     }

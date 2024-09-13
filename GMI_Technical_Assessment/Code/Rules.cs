@@ -42,14 +42,14 @@ namespace GMI_Technical_Assessment.Code
         {
             int matchesCount = 0;
 
-            for (int i = 0; i < grid.Matrix.Length; i++)
+            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
             {
-                for(int j = 0; j < grid.Matrix[i].Length; j++)
+                for(int j = 0; j < grid.Matrix.GetLength(1); j++)
                 {
-                    if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != matrixColor)
+                    if (grid.Matrix[i,j].value != 1 || grid.Matrix[i,j].color != matrixColor)
                         continue;
 
-                    grid.Matrix[i][j].color = requiredColor;
+                    grid.Matrix[i,j].color = requiredColor;
                     matchesCount++;
                 }
             }
@@ -84,21 +84,21 @@ namespace GMI_Technical_Assessment.Code
         {
             int matchesCount = 0;
 
-            if (grid.Matrix[0].Length < 5)
+            if (grid.Matrix.GetLength(1) < 5)
                 return 0;
 
-            for (int i = 0; i < grid.Matrix.Length; i++)
+            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
             {
                 int sum = 0;
 
-                for (int j = 0; j < grid.Matrix[i].Length; j++)
+                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
                 {
-                    if (requiredLength - sum + j > grid.Matrix[i].Length)
+                    if (requiredLength - sum + j > grid.Matrix.GetLength(1))
                     {
                         break;
                     }
 
-                    else if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != matrixColor)
+                    else if (grid.Matrix[i,j].value != 1 || grid.Matrix[i,j].color != matrixColor)
                     {
                         sum = 0;
                         continue;
@@ -125,7 +125,7 @@ namespace GMI_Technical_Assessment.Code
         {
             for(int j = jFrom; j < jFrom + requiredLength; j++)
             {
-                grid.Matrix[iFrom][j].color = requiredColor;
+                grid.Matrix[iFrom,j].color = requiredColor;
             }
         }
 
@@ -133,21 +133,21 @@ namespace GMI_Technical_Assessment.Code
         {
             int matchesCount = 0;
 
-            if (grid.Matrix.Length < 5)
+            if (grid.Matrix.GetLength(0) < 5)
                 return 0;
 
-            for (int j = 0; j < grid.Matrix[0].Length; j++)
+            for (int j = 0; j < grid.Matrix.GetLength(1); j++)
             {
                 int sum = 0;
 
-                for (int i = 0; i < grid.Matrix.Length; i++)
+                for (int i = 0; i < grid.Matrix.GetLength(0); i++)
                 {
-                    if (requiredLength - sum + i > grid.Matrix.Length)
+                    if (requiredLength - sum + i > grid.Matrix.GetLength(0))
                     {
                         break;
                     }
 
-                    else if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != matrixColor)
+                    else if (grid.Matrix[i,j].value != 1 || grid.Matrix[i,j].color != matrixColor)
                     {
                         sum = 0;
                         continue;
@@ -174,7 +174,7 @@ namespace GMI_Technical_Assessment.Code
         {
             for (int i = iFrom; i < iFrom + requiredLength; i++)
             {
-                grid.Matrix[i][jFrom].color = requiredColor;
+                grid.Matrix[i,jFrom].color = requiredColor;
             }
         }
     }

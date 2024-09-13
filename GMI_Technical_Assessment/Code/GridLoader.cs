@@ -26,24 +26,22 @@ namespace GMI_Technical_Assessment.Code
 
             int rowsLength = rows.Length;
             int columnsLength = rows[0].Split(' ').Length;
-            int[][] gridMatrix = new int[rowsLength][];
+            int[,] gridMatrix = new int[rowsLength, columnsLength];
 
 
-            for (int i = 0; i < gridMatrix.Length; i++)
+            for (int i = 0; i < rowsLength; i++)
             {
                 string[] currentRow = rows[i].Split(' ');
 
-                gridMatrix[i] = new int[currentRow.Length];
-
-                for (int j = 0; j < currentRow.Length; j++)
+                for (int j = 0; j < columnsLength; j++)
                 {
                     if(currentRow[j] == "x")
                     {
-                        gridMatrix[i][j] = -1;
+                        gridMatrix[i,j] = -1;
                     }
                     else
                     {
-                        gridMatrix[i][j] = int.Parse(currentRow[j]);
+                        gridMatrix[i,j] = int.Parse(currentRow[j]);
                     }
                 }
             }
@@ -55,16 +53,14 @@ namespace GMI_Technical_Assessment.Code
 
         public static Grid GetRandomized(int height, int width)
         {
-            int[][] gridMatrix = new int[height][];
+            int[,] gridMatrix = new int[height, width];
             Random random = new Random();
 
             for (int i = 0; i < height; i++)
             {
-                gridMatrix[i] = new int[width];
-
                 for (int j = 0; j < width; j++)
                 {
-                    gridMatrix[i][j] = random.Next(0, 2);
+                    gridMatrix[i,j] = random.Next(0, 2);
                 }
             }
 

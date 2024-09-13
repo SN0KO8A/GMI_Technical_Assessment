@@ -15,6 +15,8 @@ namespace GMI_Technical_Assessment
             const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
             
             Grid grid = GridLoader.LoadFromFile("test.txt");
+            //Grid grid = GridLoader.GetRandomized(16, 16);
+
             grid.SetColor(DEFAULT_DIGIT_COLOR);
 
             MatchFormations multicolorFormation = new MatchFormations

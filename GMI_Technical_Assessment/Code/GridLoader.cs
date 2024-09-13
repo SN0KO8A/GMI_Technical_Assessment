@@ -52,5 +52,25 @@ namespace GMI_Technical_Assessment.Code
 
             return grid;
         }
+
+        public static Grid GetRandomized(int height, int width)
+        {
+            int[][] gridMatrix = new int[height][];
+            Random random = new Random();
+
+            for (int i = 0; i < height; i++)
+            {
+                gridMatrix[i] = new int[width];
+
+                for (int j = 0; j < width; j++)
+                {
+                    gridMatrix[i][j] = random.Next(0, 2);
+                }
+            }
+
+            Grid grid = new Grid(gridMatrix);
+
+            return grid;
+        }
     }
 }

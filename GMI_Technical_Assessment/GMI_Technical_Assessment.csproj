@@ -44,7 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\Grid.cs" />
+    <Compile Include="Code\GridAnalyzer.cs" />
     <Compile Include="Code\GridLoader.cs" />
+    <Compile Include="Code\Rules.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

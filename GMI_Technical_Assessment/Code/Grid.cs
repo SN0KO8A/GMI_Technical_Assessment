@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace GMI_Technical_Assessment.Code
 {
-    internal class Grid
+    public class Grid
     {
         private GridCell[][] gridMaxtrix;
 
-        public GridCell[][] GridMatrix => gridMaxtrix;
+        public GridCell[][] Matrix => gridMaxtrix;
 
         public Grid(int[][] grid)
         {
@@ -43,17 +43,28 @@ namespace GMI_Technical_Assessment.Code
                 Console.Write('\n');
             }
         }
-    }
 
-    struct GridCell
-    {
-        public int value;
-        public ConsoleColor color;
-
-        public GridCell(int value = 0, ConsoleColor color = ConsoleColor.White)
+        public void SetColor(ConsoleColor color)
         {
-            this.value = value;
-            this.color = color;
+            for (int i = 0; i < gridMaxtrix.Length; i++)
+            {
+                for (int j = 0; j < gridMaxtrix[i].Length; j++)
+                {
+                    gridMaxtrix[i][j].color = color;
+                }
+            }
+        }
+
+        public struct GridCell
+        {
+            public int value;
+            public ConsoleColor color;
+
+            public GridCell(int value = 0, ConsoleColor color = ConsoleColor.White)
+            {
+                this.value = value;
+                this.color = color;
+            }
         }
     }
 }

@@ -8,55 +8,53 @@ namespace GMI_Technical_Assessment.Code
 {
     public abstract class MatchRule
     {
-        protected string name;
-        protected int matchesCount;
         protected ConsoleColor requiredColor;
-        protected ConsoleColor defaultColor;
+        protected ConsoleColor matrixColor;
 
-        public MatchRule(ConsoleColor defaultColor)
+        public ConsoleColor RequiredColor { get { return requiredColor; }  set { requiredColor = value; } }
+        public ConsoleColor MatrixColor { get { return matrixColor; }  set { matrixColor = value; } }
+
+        public MatchRule(ConsoleColor matrixColor)
         {
-            this.defaultColor = defaultColor;
+            this.matrixColor = matrixColor;
         }
 
-        public virtual void FindMatches(Grid grid) 
-        { 
-            matchesCount = 0; 
-        }
-
-        public virtual void DisplayResult()
+        public MatchRule(ConsoleColor matrixColor, ConsoleColor requiredColor)
         {
-            Console.ForegroundColor = requiredColor;
-            Console.Write(name);
-            Console.ResetColor();
-
-            Console.Write($" Count: {matchesCount}\n");
+            this.matrixColor = matrixColor;
+            this.requiredColor = requiredColor;
         }
+
+        public abstract int FindMatches(Grid grid);
     }
 
     public class UnmatchedRule : MatchRule
     {
-        public UnmatchedRule(ConsoleColor defaultColor) : base(defaultColor)
+        public UnmatchedRule(ConsoleColor matrixColor) : base(matrixColor)
         {
-            name = "Unmatched";
-            matchesCount = 0;
-            requiredColor = ConsoleColor.Yellow;
         }
 
-        public override void FindMatches(Grid grid)
+        public UnmatchedRule(ConsoleColor matrixColor, ConsoleColor requiredColor) : base(matrixColor, requiredColor)
         {
-            base.FindMatches(grid);
+        }
+
+        public override int FindMatches(Grid grid)
+        {
+            int matchesCount = 0;
 
             for (int i = 0; i < grid.Matrix.Length; i++)
             {
                 for(int j = 0; j < grid.Matrix[i].Length; j++)
                 {
-                    if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != defaultColor)
+                    if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != matrixColor)
                         continue;
 
                     grid.Matrix[i][j].color = requiredColor;
                     matchesCount++;
                 }
             }
+
+            return matchesCount;
         }
     }
 
@@ -64,25 +62,30 @@ namespace GMI_Technical_Assessment.Code
     {
         private const int requiredLength = 5;
 
-        public StraightLineOfFive(ConsoleColor defaultColor) : base(defaultColor)
+        public StraightLineOfFive(ConsoleColor matrixColor, ConsoleColor requiredColor) : base(matrixColor, requiredColor)
         {
-            name = "Straight line of 5";
-            matchesCount = 0;
-            requiredColor = ConsoleColor.Blue;
         }
 
-        public override void FindMatches(Grid grid)
+        public StraightLineOfFive(ConsoleColor matrixColor) : base(matrixColor)
         {
-            base.FindMatches(grid);
-
-            FindHorizontalMatch(grid);
-            FindVerticalMatch(grid);
         }
 
-        private void FindHorizontalMatch(Grid grid)
+        public override int FindMatches(Grid grid)
         {
+            int matchesCount = 0;
+
+            matchesCount += FindHorizontalMatch(grid);
+            matchesCount += FindVerticalMatch(grid);
+
+            return matchesCount;
+        }
+
+        private int FindHorizontalMatch(Grid grid)
+        {
+            int matchesCount = 0;
+
             if (grid.Matrix[0].Length < 5)
-                return;
+                return 0;
 
             for (int i = 0; i < grid.Matrix.Length; i++)
             {
@@ -95,7 +98,7 @@ namespace GMI_Technical_Assessment.Code
                         break;
                     }
 
-                    else if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != defaultColor)
+                    else if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != matrixColor)
                     {
                         sum = 0;
                         continue;
@@ -114,6 +117,8 @@ namespace GMI_Technical_Assessment.Code
                     }
                 }
             }
+
+            return matchesCount;
         }
 
         private void FillColorHorizontaly(Grid grid, int iFrom, int jFrom)
@@ -124,10 +129,12 @@ namespace GMI_Technical_Assessment.Code
             }
         }
 
-        private void FindVerticalMatch(Grid grid)
+        private int FindVerticalMatch(Grid grid)
         {
+            int matchesCount = 0;
+
             if (grid.Matrix.Length < 5)
-                return;
+                return 0;
 
             for (int j = 0; j < grid.Matrix[0].Length; j++)
             {
@@ -140,7 +147,7 @@ namespace GMI_Technical_Assessment.Code
                         break;
                     }
 
-                    else if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != defaultColor)
+                    else if (grid.Matrix[i][j].value != 1 || grid.Matrix[i][j].color != matrixColor)
                     {
                         sum = 0;
                         continue;
@@ -159,6 +166,8 @@ namespace GMI_Technical_Assessment.Code
                     }
                 }
             }
+
+            return matchesCount;
         }
 
         private void FillColorVertical(Grid grid, int iFrom, int jFrom)

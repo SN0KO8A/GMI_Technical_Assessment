@@ -8,16 +8,16 @@ namespace GMI_Technical_Assessment.Code
 {
     internal class GridAnalyzer
     {
-        private MatchRule[] rules;
+        private MatchFormations[] formations;
 
-        public GridAnalyzer(MatchRule[] rules)
+        public GridAnalyzer(MatchFormations[] formations)
         {
-            this.rules = rules;
+            this.formations = formations;
         }
 
         public void Analyze(Grid grid)
         {
-            foreach (MatchRule rule in rules)
+            foreach (MatchFormations rule in formations)
             {
                 rule.FindMatches(grid);
             }
@@ -25,7 +25,7 @@ namespace GMI_Technical_Assessment.Code
 
         public void DisplayResult()
         {
-            foreach (MatchRule rule in rules)
+            foreach (MatchFormations rule in formations)
             {
                 rule.DisplayResult();
             }

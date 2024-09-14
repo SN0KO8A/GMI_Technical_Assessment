@@ -56,12 +56,37 @@ namespace GMI_Technical_Assessment
                             }),
                         new ShapeRule(
                             DEFAULT_DIGIT_COLOR,
+                            "T Shape (alternative)",
+                            new int[,]
+                            {
+                                { 1, 1, 1},
+                                { 1, 1, 0},
+                            }),
+                        new ShapeRule(
+                            DEFAULT_DIGIT_COLOR,
                             "2x2 Block",
                             new int[,]
                             {
                                 { 1, 1},
                                 { 1, 1},
                             }),
+                    }
+                );
+
+            MatchFormations greenThreeFormation = new MatchFormations
+                (
+                    "Match 3",
+                    ConsoleColor.Green,
+
+                    new MatchRule[]
+                    {                        
+                        new ShapeRule(
+                            DEFAULT_DIGIT_COLOR,
+                            "Straight Line of 3",
+                            new int[,]
+                            {
+                                { 1, 1, 1},
+                            })
                     }
                 );
 
@@ -80,6 +105,7 @@ namespace GMI_Technical_Assessment
             {
                 multicolorFormation,
                 propellerFormation,
+                greenThreeFormation,
                 unmatchedFormation,
             });
 
@@ -115,8 +141,9 @@ namespace GMI_Technical_Assessment
                 if (keyInfo.Key == ConsoleKey.Enter || keyInfo.Key == ConsoleKey.RightArrow || keyInfo.Key == ConsoleKey.LeftArrow)
                 {
                     Console.Clear();
+                    Console.WriteLine("\x1b[3J");
 
-                    if(keyInfo.Key == ConsoleKey.RightArrow)
+                    if (keyInfo.Key == ConsoleKey.RightArrow)
                     {
                         fillPercent += 5;
                         fillPercent = fillPercent > 100 ? 100 : fillPercent;

@@ -348,19 +348,35 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
+            bool isPatternCube = pattern.GetLength(0) == pattern.GetLength(1);
+            bool hasPatternZero = HasPatternZero();
+
             if (pattern.GetLength(0) <= grid.Matrix.GetLength(0) && pattern.GetLength(1) <= grid.Matrix.GetLength(1))
-                matches += FindHorizontalMatches(grid);
+                matches += FindHorizontalMatches(grid, hasPatternZero);
 
             if (pattern.GetLength(0) <= grid.Matrix.GetLength(1) && pattern.GetLength(1) <= grid.Matrix.GetLength(0))
-                matches += FindVerticalMatches(grid);
+                matches += FindVerticalMatches(grid, hasPatternZero);
 
             Console.WriteLine($"Debug -> {name} - {matches}");
 
             return matches;
-
         }
 
-        private int FindHorizontalMatches(Grid grid)
+        private bool HasPatternZero()
+        {
+            for (int i = 0; i < pattern.GetLength(0); i++)
+            {
+                for (int j = 0; j < pattern.GetLength(1); j++)
+                {
+                    if (pattern[i,j] == 0)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private int FindHorizontalMatches(Grid grid, bool flipCheck)
         {
             int matches = 0;
 
@@ -376,9 +392,9 @@ namespace GMI_Technical_Assessment.Code
                         break;
                     }
 
-                    if (IsHorizontalPatternApplied(grid, i, j))
+                    if (IsHorizontalPatternApplied(grid, i, j, flipCheck, out int flipIndex))
                     {
-                        FillHorizontalShape(grid, i, j);
+                        FillHorizontalShape(grid, i, j, flipIndex);
                         matches++;
 
                         j += pattern.GetLength(1) - 1;
@@ -389,7 +405,7 @@ namespace GMI_Technical_Assessment.Code
             return matches;
         }
 
-        private int FindVerticalMatches(Grid grid)
+        private int FindVerticalMatches(Grid grid, bool flipCheck)
         {
             int matches = 0;
 
@@ -405,9 +421,9 @@ namespace GMI_Technical_Assessment.Code
                         break;
                     }
 
-                    if (IsVerticalPatternApplied(grid, i, j))
+                    if (IsVerticalPatternApplied(grid, i, j, flipCheck, out int flipIndex))
                     {
-                        FillVerticalShape(grid, i, j);
+                        FillVerticalShape(grid, i, j, flipIndex);
                         matches++;
 
                         j += pattern.GetLength(0) - 1;
@@ -418,44 +434,80 @@ namespace GMI_Technical_Assessment.Code
             return matches;
         }
 
-        private bool IsHorizontalPatternApplied(Grid grid, int iStart, int jStart)
+        private bool IsHorizontalPatternApplied(Grid grid, int iStart, int jStart, bool flipCheck, out int flipIndex)
         {
-            for (int iPattern = 0, iGrid = iStart; iPattern < pattern.GetLength(0); iPattern++, iGrid++)
-            {
-                for (int jPattern = 0, jGrid = jStart; jPattern < pattern.GetLength(1); jPattern++, jGrid++)
-                {
-                    bool isCellSame = grid.Matrix[iGrid, jGrid].value == pattern[iPattern, jPattern];
+            int needFlips = flipCheck ? 4 : 1;
 
-                    if (!isCellSame || grid.Matrix[iGrid, jGrid].color != matrixColor)
+            for (flipIndex = 0; flipIndex < needFlips; flipIndex++)
+            {
+                bool isPatternAppliable = true;
+                int[,] flipedPattern = GetFlipedPattern(flipIndex);
+
+                for (int iPattern = 0, iGrid = iStart; iPattern < flipedPattern.GetLength(0); iPattern++, iGrid++)
+                {
+                    isPatternAppliable = true;
+
+                    for (int jPattern = 0, jGrid = jStart; jPattern < flipedPattern.GetLength(1); jPattern++, jGrid++)
                     {
-                        return false;
+                        bool isCellSame = grid.Matrix[iGrid, jGrid].value == flipedPattern[iPattern, jPattern];
+
+                        if (!isCellSame || grid.Matrix[iGrid, jGrid].color != matrixColor)
+                        {
+                            isPatternAppliable = false;
+                            break;
+                        }
                     }
+
+                    if (!isPatternAppliable)
+                        break;
                 }
+
+                if(isPatternAppliable)
+                    return true;
             }
 
-            return true;
+            return false;
         }
 
-        private bool IsVerticalPatternApplied(Grid grid, int iStart, int jStart)
+        private bool IsVerticalPatternApplied(Grid grid, int iStart, int jStart, bool flipCheck, out int flipIndex)
         {
-            for (int jPattern = 0, jGrid = jStart; jPattern < pattern.GetLength(1); jPattern++, jGrid++)
-            {
-                for (int iPattern = 0, iGrid = iStart; iPattern < pattern.GetLength(0); iPattern++, iGrid++)
-                {
-                    bool isCellSame = grid.Matrix[jGrid, iGrid].value == pattern[iPattern, jPattern];
+            int needFlips = flipCheck ? 4 : 1;
 
-                    if (!isCellSame || grid.Matrix[jGrid, iGrid].color != matrixColor)
+            for (flipIndex = 0; flipIndex < needFlips; flipIndex++)
+            {
+                bool isPatternAppliable = true;
+                int[,] flipedPattern = GetFlipedPattern(flipIndex);
+
+                for (int jPattern = 0, jGrid = jStart; jPattern < flipedPattern.GetLength(1); jPattern++, jGrid++)
+                {
+                    isPatternAppliable = true;
+
+                    for (int iPattern = 0, iGrid = iStart; iPattern < flipedPattern.GetLength(0); iPattern++, iGrid++)
                     {
-                        return false;
+                        bool isCellSame = grid.Matrix[jGrid, iGrid].value == flipedPattern[iPattern, jPattern];
+
+                        if (!isCellSame || grid.Matrix[jGrid, iGrid].color != matrixColor)
+                        {
+                            isPatternAppliable = false;
+                            break;
+                        }
                     }
+
+                    if (!isPatternAppliable)
+                        break;
                 }
+
+                if (isPatternAppliable)
+                    return true;
             }
 
-            return true;
+            return false;
         }
 
-        private void FillHorizontalShape(Grid grid, int iStart, int jStart)
+        private void FillHorizontalShape(Grid grid, int iStart, int jStart, int flipIndex)
         {
+            int[,] flipedPattern = GetFlipedPattern(flipIndex);
+
             for (int i = 0; i < pattern.GetLength(0); i++)
             {
                 for (int j = 0; j < pattern.GetLength(1); j++)
@@ -468,11 +520,13 @@ namespace GMI_Technical_Assessment.Code
             }
         }
 
-        private void FillVerticalShape(Grid grid, int iStart, int jStart)
+        private void FillVerticalShape(Grid grid, int iStart, int jStart, int flipIndex)
         {
-            for (int j = 0; j < pattern.GetLength(1); j++)
+            int[,] flipedPattern = GetFlipedPattern(flipIndex);
+
+            for (int j = 0; j < flipedPattern.GetLength(1); j++)
             {
-                for (int i = 0; i < pattern.GetLength(0); i++)
+                for (int i = 0; i < flipedPattern.GetLength(0); i++)
                 {
                     if (grid.Matrix[jStart + j, iStart + i].value == 1)
                     {
@@ -480,6 +534,51 @@ namespace GMI_Technical_Assessment.Code
                     }
                 }
             }
+        }
+
+        private int[,] GetFlipedPattern(int flips)
+        {
+            int[,] flipedPatern = new int[pattern.GetLength(0), pattern.GetLength(1)];
+
+            int iFactor;
+            int jFactor;
+
+            switch (flips)
+            {
+                case 1:
+                    iFactor = -1;
+                    jFactor = 1;
+                    break;
+                case 2:
+                    iFactor = -1;
+                    jFactor = -1;
+                    break;
+                case 3:
+                    iFactor = 1;
+                    jFactor = -1;
+                    break;
+                default:
+                case 0:
+                    iFactor = 1;
+                    jFactor = 1;
+                    break;
+            }
+
+            if (iFactor == 1 && jFactor == 1)
+                return pattern;
+
+            for (int i = 0; i < pattern.GetLength(0); i++)
+            {
+                for (int j = 0; j < pattern.GetLength(1); j++)
+                {
+                    int iFliped = iFactor == -1 ? pattern.GetLength(0) - i - 1 : i;
+                    int jFliped = jFactor == -1 ? pattern.GetLength(1) - j - 1 : j;
+
+                    flipedPatern[i, j] = pattern[iFliped, jFliped];
+                }
+            }
+
+            return flipedPatern;
         }
     }
 }

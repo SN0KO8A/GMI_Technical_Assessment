@@ -10,19 +10,16 @@ namespace GMI_Technical_Assessment
 {
     internal class Program
     {
+        private const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
+
         static void Main(string[] args)
         {
             TestRun();
-            //RandomRun();
+            RandomRun();
         }
 
-        static void TestRun()
+        private static GridAnalyzer GetCurrentGridAnalyzer()
         {
-            const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
-
-            Grid grid = GridLoader.LoadFromFile("test.txt");
-            grid.SetColor(DEFAULT_DIGIT_COLOR);
-
             MatchFormations multicolorFormation = new MatchFormations
                 (
                     "Multicolor",
@@ -32,7 +29,39 @@ namespace GMI_Technical_Assessment
                     {
                         new CrossShape(DEFAULT_DIGIT_COLOR),
                         new TShape(DEFAULT_DIGIT_COLOR),
-                        new StraightLineOfFive(DEFAULT_DIGIT_COLOR),
+                        new ShapeRule(
+                            DEFAULT_DIGIT_COLOR,
+                            "Straight Line of 5",
+                            new int[,]
+                            {
+                                { 1, 1, 1, 1, 1},
+                            }),
+                    }
+                );
+
+            MatchFormations propellerFormation = new MatchFormations
+                (
+                    "Propeller",
+                    ConsoleColor.Red,
+
+                    new MatchRule[]
+                    {
+                        new ShapeRule(
+                            DEFAULT_DIGIT_COLOR,
+                            "Double Layer",
+                            new int[,]
+                            {
+                                { 1, 1, 1},
+                                { 1, 1, 1},
+                            }),
+                        new ShapeRule(
+                            DEFAULT_DIGIT_COLOR,
+                            "2x2 Block",
+                            new int[,]
+                            {
+                                { 1, 1},
+                                { 1, 1},
+                            }),
                     }
                 );
 
@@ -50,8 +79,19 @@ namespace GMI_Technical_Assessment
             GridAnalyzer gridAnalyzer = new GridAnalyzer(new MatchFormations[]
             {
                 multicolorFormation,
+                propellerFormation,
                 unmatchedFormation,
             });
+
+            return gridAnalyzer;
+        }
+
+        static void TestRun()
+        {
+            Grid grid = GridLoader.LoadFromFile("test.txt");
+            grid.SetColor(DEFAULT_DIGIT_COLOR);
+
+            GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
 
             if (grid != null)
             {
@@ -65,37 +105,7 @@ namespace GMI_Technical_Assessment
 
         static void RandomRun()
         {
-            const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
-
-            MatchFormations multicolorFormation = new MatchFormations
-                (
-                    "Multicolor",
-                    ConsoleColor.Blue,
-
-                    new MatchRule[]
-                    {
-                        new CrossShape(DEFAULT_DIGIT_COLOR),
-                        new StraightLineOfFive(DEFAULT_DIGIT_COLOR),
-                    }
-                );
-
-            MatchFormations unmatchedFormation = new MatchFormations
-                (
-                    "Unmatched",
-                    ConsoleColor.Yellow,
-
-                    new MatchRule[]
-                    {
-                        new UnmatchedRule(DEFAULT_DIGIT_COLOR),
-                    }
-                );
-
-            GridAnalyzer gridAnalyzer = new GridAnalyzer(new MatchFormations[]
-            {
-                multicolorFormation,
-                unmatchedFormation,
-            });
-
+            GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
             int fillPercent = 50;
 
             do

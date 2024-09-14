@@ -12,8 +12,8 @@ namespace GMI_Technical_Assessment.Code
         protected ConsoleColor requiredColor;
         protected ConsoleColor matrixColor;
 
-        public ConsoleColor RequiredColor { get { return requiredColor; }  set { requiredColor = value; } }
-        public ConsoleColor MatrixColor { get { return matrixColor; }  set { matrixColor = value; } }
+        public ConsoleColor RequiredColor { get { return requiredColor; } set { requiredColor = value; } }
+        public ConsoleColor MatrixColor { get { return matrixColor; } set { matrixColor = value; } }
 
         public MatchRule(ConsoleColor matrixColor)
         {
@@ -45,12 +45,12 @@ namespace GMI_Technical_Assessment.Code
 
             for (int i = 0; i < grid.Matrix.GetLength(0); i++)
             {
-                for(int j = 0; j < grid.Matrix.GetLength(1); j++)
+                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
                 {
-                    if (grid.Matrix[i,j].value != 1 || grid.Matrix[i,j].color != matrixColor)
+                    if (grid.Matrix[i, j].value != 1 || grid.Matrix[i, j].color != matrixColor)
                         continue;
 
-                    grid.Matrix[i,j].color = requiredColor;
+                    grid.Matrix[i, j].color = requiredColor;
                     matchesCount++;
                 }
             }
@@ -101,7 +101,7 @@ namespace GMI_Technical_Assessment.Code
                         break;
                     }
 
-                    else if (grid.Matrix[i,j].value != 1 || grid.Matrix[i,j].color != matrixColor)
+                    else if (grid.Matrix[i, j].value != 1 || grid.Matrix[i, j].color != matrixColor)
                     {
                         sum = 0;
                         continue;
@@ -126,9 +126,9 @@ namespace GMI_Technical_Assessment.Code
 
         private void FillColorHorizontaly(Grid grid, int iFrom, int jFrom)
         {
-            for(int j = jFrom; j < jFrom + requiredLength; j++)
+            for (int j = jFrom; j < jFrom + requiredLength; j++)
             {
-                grid.Matrix[iFrom,j].color = requiredColor;
+                grid.Matrix[iFrom, j].color = requiredColor;
             }
         }
 
@@ -150,7 +150,7 @@ namespace GMI_Technical_Assessment.Code
                         break;
                     }
 
-                    else if (grid.Matrix[i,j].value != 1 || grid.Matrix[i,j].color != matrixColor)
+                    else if (grid.Matrix[i, j].value != 1 || grid.Matrix[i, j].color != matrixColor)
                     {
                         sum = 0;
                         continue;
@@ -177,7 +177,7 @@ namespace GMI_Technical_Assessment.Code
         {
             for (int i = iFrom; i < iFrom + requiredLength; i++)
             {
-                grid.Matrix[i,jFrom].color = requiredColor;
+                grid.Matrix[i, jFrom].color = requiredColor;
             }
         }
     }
@@ -198,7 +198,7 @@ namespace GMI_Technical_Assessment.Code
             int iCenter = grid.Matrix.GetLength(0) / 2;
             int jCenter = grid.Matrix.GetLength(1) / 2;
 
-            for (int step = 0;; step++)
+            for (int step = 0; ; step++)
             {
                 int rightSide = jCenter + step;
                 int leftSide = jCenter - step;
@@ -425,7 +425,7 @@ namespace GMI_Technical_Assessment.Code
 
         private void FillSideColor(Grid grid, TShapeSide shapeSide)
         {
-            if(shapeSide == TShapeSide.Top || shapeSide == TShapeSide.Buttom)
+            if (shapeSide == TShapeSide.Top || shapeSide == TShapeSide.Buttom)
             {
                 int i = shapeSide == TShapeSide.Top ? 0 : grid.Matrix.GetLength(0) - 1;
 
@@ -452,6 +452,156 @@ namespace GMI_Technical_Assessment.Code
             Buttom,
             Right,
             Left,
+        }
+    }
+
+    public class ShapeRule : MatchRule
+    {
+        private string name = "test";
+        private int[,] pattern;
+
+        public ShapeRule(ConsoleColor matrixColor, string name, int[,] pattern) : base(matrixColor)
+        {
+            this.pattern = pattern;
+            this.name = name;
+        }
+
+        public override int FindMatches(Grid grid)
+        {
+            int matches = 0;
+
+            if (pattern.GetLength(0) <= grid.Matrix.GetLength(0) && pattern.GetLength(1) <= grid.Matrix.GetLength(1))
+                matches += FindHorizontalMatches(grid);
+
+            if (pattern.GetLength(0) <= grid.Matrix.GetLength(1) && pattern.GetLength(1) <= grid.Matrix.GetLength(0))
+                matches += FindVerticalMatches(grid);
+
+            Console.WriteLine($"Debug -> {name} - {matches}");
+
+            return matches;
+
+        }
+
+        private int FindHorizontalMatches(Grid grid)
+        {
+            int matches = 0;
+
+            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
+            {
+                if (i + pattern.GetLength(0) > grid.Matrix.GetLength(0))
+                    break;
+
+                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
+                {
+                    if (j + pattern.GetLength(1) > grid.Matrix.GetLength(1))
+                    {
+                        break;
+                    }
+
+                    if (IsHorizontalPatternApplied(grid, i, j))
+                    {
+                        FillHorizontalShape(grid, i, j);
+                        matches++;
+
+                        j += pattern.GetLength(1) - 1;
+                    }
+                }
+            }
+
+            return matches;
+        }
+
+        private int FindVerticalMatches(Grid grid)
+        {
+            int matches = 0;
+
+            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
+            {
+                if (i + pattern.GetLength(0) > grid.Matrix.GetLength(1))
+                    break;
+
+                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
+                {
+                    if (j + pattern.GetLength(1) > grid.Matrix.GetLength(0))
+                    {
+                        break;
+                    }
+
+                    if (IsVerticalPatternApplied(grid, i, j))
+                    {
+                        FillVerticalShape(grid, i, j);
+                        matches++;
+
+                        j += pattern.GetLength(0) - 1;
+                    }
+                }
+            }
+
+            return matches;
+        }
+
+        private bool IsHorizontalPatternApplied(Grid grid, int iStart, int jStart)
+        {
+            for (int iPattern = 0, iGrid = iStart; iPattern < pattern.GetLength(0); iPattern++, iGrid++)
+            {
+                for (int jPattern = 0, jGrid = jStart; jPattern < pattern.GetLength(1); jPattern++, jGrid++)
+                {
+                    bool isCellSame = grid.Matrix[iGrid, jGrid].value == pattern[iPattern, jPattern];
+
+                    if (!isCellSame || grid.Matrix[iGrid, jGrid].color != matrixColor)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsVerticalPatternApplied(Grid grid, int iStart, int jStart)
+        {
+            for (int jPattern = 0, jGrid = jStart; jPattern < pattern.GetLength(1); jPattern++, jGrid++)
+            {
+                for (int iPattern = 0, iGrid = iStart; iPattern < pattern.GetLength(0); iPattern++, iGrid++)
+                {
+                    bool isCellSame = grid.Matrix[jGrid, iGrid].value == pattern[iPattern, jPattern];
+
+                    if (!isCellSame || grid.Matrix[jGrid, iGrid].color != matrixColor)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private void FillHorizontalShape(Grid grid, int iStart, int jStart)
+        {
+            for (int i = 0; i < pattern.GetLength(0); i++)
+            {
+                for (int j = 0; j < pattern.GetLength(1); j++)
+                {
+                    if (grid.Matrix[iStart + i, jStart + j].value == 1)
+                    {
+                        grid.Matrix[iStart + i, jStart + j].color = requiredColor;
+                    }
+                }
+            }
+        }
+
+        private void FillVerticalShape(Grid grid, int iStart, int jStart)
+        {
+            for (int j = 0; j < pattern.GetLength(1); j++)
+            {
+                for (int i = 0; i < pattern.GetLength(0); i++)
+                {
+                    if (grid.Matrix[jStart + j, iStart + i].value == 1)
+                    {
+                        grid.Matrix[jStart + j, iStart + i].color = requiredColor;
+                    }
+                }
+            }
         }
     }
 }

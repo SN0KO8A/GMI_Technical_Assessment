@@ -31,6 +31,7 @@ namespace GMI_Technical_Assessment
                     new MatchRule[]
                     {
                         new CrossShape(DEFAULT_DIGIT_COLOR),
+                        new TShape(DEFAULT_DIGIT_COLOR),
                         new StraightLineOfFive(DEFAULT_DIGIT_COLOR),
                     }
                 );
@@ -54,7 +55,6 @@ namespace GMI_Technical_Assessment
 
             if (grid != null)
             {
-                grid.DisplayMatrix();
                 gridAnalyzer.Analyze(grid);
                 Console.WriteLine("");
                 grid.DisplayMatrix();
@@ -96,16 +96,29 @@ namespace GMI_Technical_Assessment
                 unmatchedFormation,
             });
 
+            int fillPercent = 50;
+
             do
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
-
-                if (keyInfo.Key == ConsoleKey.Enter)
+                if (keyInfo.Key == ConsoleKey.Enter || keyInfo.Key == ConsoleKey.RightArrow || keyInfo.Key == ConsoleKey.LeftArrow)
                 {
                     Console.Clear();
 
-                    Grid grid = GridLoader.GetRandomized(17, 17, 80);
+                    if(keyInfo.Key == ConsoleKey.RightArrow)
+                    {
+                        fillPercent += 5;
+                        fillPercent = fillPercent > 100 ? 100 : fillPercent;
+                    }
+
+                    if(keyInfo.Key == ConsoleKey.LeftArrow)
+                    {
+                        fillPercent -= 5;
+                        fillPercent = fillPercent < 0 ? 0 : fillPercent;
+                    }
+
+                    Grid grid = GridLoader.GetRandomized(17, 17, fillPercent);
                     grid.SetColor(DEFAULT_DIGIT_COLOR);
 
                     if (grid != null)
@@ -115,6 +128,7 @@ namespace GMI_Technical_Assessment
                         grid.DisplayMatrix();
                         Console.WriteLine("");
                         gridAnalyzer.DisplayResult();
+                        Console.WriteLine($"Fill percent: {fillPercent}");
                     }
                 }
 

@@ -275,4 +275,183 @@ namespace GMI_Technical_Assessment.Code
             }
         }
     }
+
+    public class TShape : MatchRule
+    {
+        public TShape(ConsoleColor matrixColor) : base(matrixColor)
+        {
+        }
+
+        public override int FindMatches(Grid grid)
+        {
+            if (grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0)
+            {
+                return 0;
+            }
+
+            int iCenter = grid.Matrix.GetLength(0) / 2;
+            int jCenter = grid.Matrix.GetLength(1) / 2;
+
+            bool isHorizontalOut = false;
+            bool isVerticalOut = false;
+
+            for (int step = 0; ; step++)
+            {
+                int rightSide = jCenter + step;
+                int leftSide = jCenter - step;
+                int topSide = iCenter + step;
+                int bottomSide = iCenter - step;
+
+                if (topSide >= grid.Matrix.GetLength(0) && rightSide >= grid.Matrix.GetLength(1) ||
+                    isHorizontalOut && isVerticalOut)
+                {
+                    break;
+                }
+
+                if (topSide < grid.Matrix.GetLength(0) && grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor ||
+                    bottomSide >= 0 && grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
+                {
+                    isVerticalOut = true;
+                }
+
+                if (rightSide < grid.Matrix.GetLength(0) && grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor ||
+                    leftSide >= 0 && grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
+                {
+                    isHorizontalOut = true;
+                }
+            }
+
+            if (!isVerticalOut && IsHorizontalSidesIsFilled(grid, out bool isBottom))
+            {
+                TShapeSide shapeSide = isBottom ? TShapeSide.Buttom : TShapeSide.Top;
+                FillTShapeColor(grid, shapeSide);
+
+                Console.WriteLine($"Debug -> TShape - 1");
+                return 1;
+            }
+
+            else if (!isHorizontalOut && IsVerticalSidesIsFilled(grid, out bool isRight))
+            {
+                TShapeSide shapeSide = isRight ? TShapeSide.Right : TShapeSide.Left;
+                FillTShapeColor(grid, shapeSide);
+
+                Console.WriteLine($"Debug -> TShape - 1");
+                return 1;
+            }
+
+            return 0;
+        }
+
+        private bool IsVerticalSidesIsFilled(Grid grid, out bool isRight)
+        {
+            int rightSide = 1;
+            int leftSide = 1;
+
+            int horizontalSize = grid.Matrix.GetLength(1) - 1;
+
+            for (int verticalIndex = 0; verticalIndex < grid.Matrix.GetLength(0); verticalIndex++)
+            {
+                if (rightSide == 0 && leftSide == 0)
+                {
+                    isRight = false;
+                    return false;
+                }
+
+                rightSide *= grid.Matrix[verticalIndex, horizontalSize].value * (grid.Matrix[verticalIndex, horizontalSize].color == matrixColor ? 1 : 0);
+                leftSide *= grid.Matrix[verticalIndex, 0].value * (grid.Matrix[verticalIndex, 0].color == matrixColor ? 1 : 0);
+            }
+
+            isRight = rightSide == 1;
+            return true;
+        }
+
+        private bool IsHorizontalSidesIsFilled(Grid grid, out bool isDown)
+        {
+            int topSide = 1;
+            int bottomSide = 1;
+
+            int verticalSize = grid.Matrix.GetLength(0) - 1;
+
+            for (int horizontalIndex = 0; horizontalIndex < grid.Matrix.GetLength(1); horizontalIndex++)
+            {
+                if (topSide == 0 && bottomSide == 0)
+                {
+                    isDown = false;
+                    return false;
+                }
+
+                topSide *= grid.Matrix[0, horizontalIndex].value * (grid.Matrix[0, horizontalIndex].color == matrixColor ? 1 : 0);
+                bottomSide *= grid.Matrix[verticalSize, horizontalIndex].value * (grid.Matrix[verticalSize, horizontalIndex].color == matrixColor ? 1 : 0);
+            }
+
+            isDown = bottomSide == 1;
+            return true;
+        }
+
+        private void FillTShapeColor(Grid grid, TShapeSide shapeSide)
+        {
+            FillSideColor(grid, shapeSide);
+
+            if (shapeSide == TShapeSide.Top || shapeSide == TShapeSide.Buttom)
+            {
+                FillMiddleVerticalColor(grid);
+            }
+
+            else
+            {
+                FillMiddleHorizontalColor(grid);
+            }
+        }
+
+        private void FillMiddleVerticalColor(Grid grid)
+        {
+            int jCenter = grid.Matrix.GetLength(1) / 2;
+
+            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
+            {
+                grid.Matrix[i, jCenter].color = requiredColor;
+            }
+        }
+
+        private void FillMiddleHorizontalColor(Grid grid)
+        {
+            int iCenter = grid.Matrix.GetLength(0) / 2;
+
+            for (int j = 0; j < grid.Matrix.GetLength(1); j++)
+            {
+                grid.Matrix[iCenter, j].color = requiredColor;
+            }
+        }
+
+        private void FillSideColor(Grid grid, TShapeSide shapeSide)
+        {
+            if(shapeSide == TShapeSide.Top || shapeSide == TShapeSide.Buttom)
+            {
+                int i = shapeSide == TShapeSide.Top ? 0 : grid.Matrix.GetLength(0) - 1;
+
+                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
+                {
+                    grid.Matrix[i, j].color = requiredColor;
+                }
+            }
+
+            else
+            {
+                int j = shapeSide == TShapeSide.Left ? 0 : grid.Matrix.GetLength(1) - 1;
+
+                for (int i = 0; i < grid.Matrix.GetLength(0); i++)
+                {
+                    grid.Matrix[i, j].color = requiredColor;
+                }
+            }
+        }
+
+        private enum TShapeSide
+        {
+            Top,
+            Buttom,
+            Right,
+            Left,
+        }
+    }
 }

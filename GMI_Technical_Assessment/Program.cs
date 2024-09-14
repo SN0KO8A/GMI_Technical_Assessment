@@ -12,11 +12,15 @@ namespace GMI_Technical_Assessment
     {
         static void Main(string[] args)
         {
-            const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
-            
-            Grid grid = GridLoader.LoadFromFile("test.txt");
-            //Grid grid = GridLoader.GetRandomized(16, 16);
+            TestRun();
+            //RandomRun();
+        }
 
+        static void TestRun()
+        {
+            const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
+
+            Grid grid = GridLoader.LoadFromFile("test.txt");
             grid.SetColor(DEFAULT_DIGIT_COLOR);
 
             MatchFormations multicolorFormation = new MatchFormations
@@ -26,6 +30,7 @@ namespace GMI_Technical_Assessment
 
                     new MatchRule[]
                     {
+                        new CrossShape(DEFAULT_DIGIT_COLOR),
                         new StraightLineOfFive(DEFAULT_DIGIT_COLOR),
                     }
                 );
@@ -56,6 +61,70 @@ namespace GMI_Technical_Assessment
                 Console.WriteLine("");
                 gridAnalyzer.DisplayResult();
             }
+        }
+
+        static void RandomRun()
+        {
+            const ConsoleColor DEFAULT_DIGIT_COLOR = ConsoleColor.White;
+
+            MatchFormations multicolorFormation = new MatchFormations
+                (
+                    "Multicolor",
+                    ConsoleColor.Blue,
+
+                    new MatchRule[]
+                    {
+                        new CrossShape(DEFAULT_DIGIT_COLOR),
+                        new StraightLineOfFive(DEFAULT_DIGIT_COLOR),
+                    }
+                );
+
+            MatchFormations unmatchedFormation = new MatchFormations
+                (
+                    "Unmatched",
+                    ConsoleColor.Yellow,
+
+                    new MatchRule[]
+                    {
+                        new UnmatchedRule(DEFAULT_DIGIT_COLOR),
+                    }
+                );
+
+            GridAnalyzer gridAnalyzer = new GridAnalyzer(new MatchFormations[]
+            {
+                multicolorFormation,
+                unmatchedFormation,
+            });
+
+            do
+            {
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+
+
+                if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    Console.Clear();
+
+                    Grid grid = GridLoader.GetRandomized(17, 17, 80);
+                    grid.SetColor(DEFAULT_DIGIT_COLOR);
+
+                    if (grid != null)
+                    {
+                        gridAnalyzer.Analyze(grid);
+                        Console.WriteLine("");
+                        grid.DisplayMatrix();
+                        Console.WriteLine("");
+                        gridAnalyzer.DisplayResult();
+                    }
+                }
+
+                if(keyInfo.Key == ConsoleKey.Escape)
+                {
+                    break;
+                }
+
+
+            }while(true);
         }
     }
 }

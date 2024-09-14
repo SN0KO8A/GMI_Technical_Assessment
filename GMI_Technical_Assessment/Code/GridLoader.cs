@@ -51,7 +51,7 @@ namespace GMI_Technical_Assessment.Code
             return grid;
         }
 
-        public static Grid GetRandomized(int height, int width)
+        public static Grid GetRandomized(int height, int width, int fillPercent = 50)
         {
             int[,] gridMatrix = new int[height, width];
             Random random = new Random();
@@ -60,7 +60,7 @@ namespace GMI_Technical_Assessment.Code
             {
                 for (int j = 0; j < width; j++)
                 {
-                    gridMatrix[i,j] = random.Next(0, 2);
+                    gridMatrix[i,j] = random.Next(0, 101) >= 100 - fillPercent ? 1 : 0;
                 }
             }
 

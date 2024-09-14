@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +55,7 @@ namespace GMI_Technical_Assessment.Code
                 }
             }
 
+            Console.WriteLine($"Debug -> Unmatched - {matchesCount}");
             return matchesCount;
         }
     }
@@ -77,6 +79,7 @@ namespace GMI_Technical_Assessment.Code
             matchesCount += FindHorizontalMatch(grid);
             matchesCount += FindVerticalMatch(grid);
 
+            Console.WriteLine($"Debug -> Straght of five - {matchesCount}");
             return matchesCount;
         }
 
@@ -175,6 +178,100 @@ namespace GMI_Technical_Assessment.Code
             for (int i = iFrom; i < iFrom + requiredLength; i++)
             {
                 grid.Matrix[i,jFrom].color = requiredColor;
+            }
+        }
+    }
+
+    public class CrossShape : MatchRule
+    {
+        public CrossShape(ConsoleColor matrixColor) : base(matrixColor)
+        {
+        }
+
+        public override int FindMatches(Grid grid)
+        {
+            if (grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0)
+            {
+                return 0;
+            }
+
+            int iCenter = grid.Matrix.GetLength(0) / 2;
+            int jCenter = grid.Matrix.GetLength(1) / 2;
+
+            for (int step = 0;; step++)
+            {
+                int rightSide = jCenter + step;
+                int leftSide = jCenter - step;
+                int topSide = iCenter + step;
+                int bottomSide = iCenter - step;
+
+                if (topSide >= grid.Matrix.GetLength(0) && rightSide >= grid.Matrix.GetLength(1))
+                {
+                    break;
+                }
+
+                if (topSide < grid.Matrix.GetLength(0) && grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor)
+                {
+                    return 0;
+                }
+
+                if (bottomSide >= 0 && grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
+                {
+                    return 0;
+                }
+
+                if (rightSide < grid.Matrix.GetLength(0) && grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor)
+                {
+                    return 0;
+                }
+
+                if (leftSide >= 0 && grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
+                {
+                    return 0;
+                }
+            }
+
+            FillColorCross(grid, iCenter, jCenter);
+
+            Console.WriteLine($"Debug -> CrossShape - 1");
+            return 1;
+        }
+
+        private void FillColorCross(Grid grid, int iCenter, int jCenter)
+        {
+            grid.Matrix[iCenter, jCenter].color = requiredColor;
+
+            for (int step = 0; ; step++)
+            {
+                int rightSide = jCenter + step;
+                int leftSide = jCenter - step;
+                int topSide = iCenter + step;
+                int bottomSide = iCenter - step;
+
+                if (topSide >= grid.Matrix.GetLength(0) && rightSide >= grid.Matrix.GetLength(1))
+                {
+                    break;
+                }
+
+                if (topSide < grid.Matrix.GetLength(0))
+                {
+                    grid.Matrix[topSide, jCenter].color = requiredColor;
+                }
+
+                if (bottomSide >= 0)
+                {
+                    grid.Matrix[bottomSide, jCenter].color = requiredColor;
+                }
+
+                if (rightSide < grid.Matrix.GetLength(0))
+                {
+                    grid.Matrix[iCenter, rightSide].color = requiredColor;
+                }
+
+                if (leftSide >= 0)
+                {
+                    grid.Matrix[iCenter, leftSide].color = requiredColor;
+                }
             }
         }
     }

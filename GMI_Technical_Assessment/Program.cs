@@ -155,11 +155,16 @@ namespace GMI_Technical_Assessment
                         fillPercent = fillPercent < 0 ? 0 : fillPercent;
                     }
 
-                    Grid grid = GridLoader.GetRandomized(17, 17, fillPercent);
+                    Random random = new Random();
+                    int height = random.Next(1, 20);
+                    int width = random.Next(1, 20);
+
+                    Grid grid = GridLoader.GetRandomized(height, width, fillPercent);
                     grid.SetColor(DEFAULT_DIGIT_COLOR);
 
                     if (grid != null)
                     {
+                        Console.WriteLine($"MATRIX SIZE -> {height} : {width}");
                         gridAnalyzer.Analyze(grid);
                         Console.WriteLine("");
                         grid.DisplayMatrix();

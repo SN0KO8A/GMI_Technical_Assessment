@@ -88,24 +88,22 @@ namespace GMI_Technical_Assessment.Code
                     break;
                 }
 
-                if (topSide < grid.Matrix.GetLength(0) && grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor)
+                if (topSide < grid.Matrix.GetLength(0) && bottomSide >= 0)
                 {
-                    return 0;
+                    if (grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor ||
+                        grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
+                    {
+                        return 0;
+                    }
                 }
 
-                if (bottomSide >= 0 && grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
+                if (rightSide < grid.Matrix.GetLength(0) && leftSide >= 0)
                 {
-                    return 0;
-                }
-
-                if (rightSide < grid.Matrix.GetLength(0) && grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor)
-                {
-                    return 0;
-                }
-
-                if (leftSide >= 0 && grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
-                {
-                    return 0;
+                    if (grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor ||
+                        grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
+                    {
+                        return 0;
+                    }
                 }
             }
 
@@ -186,16 +184,22 @@ namespace GMI_Technical_Assessment.Code
                     break;
                 }
 
-                if (topSide < grid.Matrix.GetLength(0) && grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor ||
-                    bottomSide >= 0 && grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
+                if (topSide < grid.Matrix.GetLength(0) && bottomSide >= 0)
                 {
-                    isVerticalOut = true;
+                    if (grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor ||
+                        grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
+                    {
+                        isVerticalOut = true;
+                    }
                 }
 
-                if (rightSide < grid.Matrix.GetLength(0) && grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor ||
-                    leftSide >= 0 && grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
+                if (rightSide < grid.Matrix.GetLength(0) && leftSide >= 0)
                 {
-                    isHorizontalOut = true;
+                    if (grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor ||
+                        grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
+                    {
+                        isHorizontalOut = true;
+                    }
                 }
             }
 
@@ -354,7 +358,7 @@ namespace GMI_Technical_Assessment.Code
             if (pattern.GetLength(0) <= grid.Matrix.GetLength(0) && pattern.GetLength(1) <= grid.Matrix.GetLength(1))
                 matches += FindHorizontalMatches(grid, hasPatternZero);
 
-            if (pattern.GetLength(0) <= grid.Matrix.GetLength(1) && pattern.GetLength(1) <= grid.Matrix.GetLength(0))
+            if (pattern.GetLength(0) <= grid.Matrix.GetLength(1) && pattern.GetLength(1) <= grid.Matrix.GetLength(0) && !isPatternCube)
                 matches += FindVerticalMatches(grid, hasPatternZero);
 
             Console.WriteLine($"Debug -> {name} - {matches}");
@@ -409,12 +413,12 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
-            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
+            for (int i = 0; i < grid.Matrix.GetLength(1); i++)
             {
                 if (i + pattern.GetLength(0) > grid.Matrix.GetLength(1))
                     break;
 
-                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
+                for (int j = 0; j < grid.Matrix.GetLength(0); j++)
                 {
                     if (j + pattern.GetLength(1) > grid.Matrix.GetLength(0))
                     {
@@ -499,7 +503,7 @@ namespace GMI_Technical_Assessment.Code
 
                 if (isPatternAppliable)
                     return true;
-            }
+                }
 
             return false;
         }

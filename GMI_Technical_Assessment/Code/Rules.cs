@@ -358,12 +358,8 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
-            bool isPaternBiggerThanGrid = pattern.GetLength(0) > grid.Matrix.GetLength(0) || pattern.GetLength(1) > grid.Matrix.GetLength(1);
             bool isPatternCube = pattern.GetLength(0) == pattern.GetLength(1);
             bool hasPatternZero = HasPatternZero();
-
-            if (isPaternBiggerThanGrid)
-                return 0;
 
             matches += FindHorizontalMatches(grid, hasPatternZero);
 

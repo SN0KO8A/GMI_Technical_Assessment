@@ -68,7 +68,10 @@ namespace GMI_Technical_Assessment.Code
 
         public override int FindMatches(Grid grid)
         {
-            if (grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0)
+            bool isGridSidesEven = grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0;
+            bool isGridTooSmall = grid.Matrix.GetLength(0) < 2 || grid.Matrix.GetLength(1) < 2;
+
+            if (isGridSidesEven || isGridTooSmall)
             {
                 return 0;
             }
@@ -78,32 +81,36 @@ namespace GMI_Technical_Assessment.Code
 
             for (int step = 0; ; step++)
             {
+                int checkResult = 1;
+
                 int rightSide = jCenter + step;
                 int leftSide = jCenter - step;
                 int topSide = iCenter + step;
                 int bottomSide = iCenter - step;
 
-                if (topSide >= grid.Matrix.GetLength(0) && rightSide >= grid.Matrix.GetLength(1))
+                bool isHorizontalOutOfBounds = rightSide >= grid.Matrix.GetLength(1) || leftSide < 0;
+                bool isVerticalOutOfBounds = topSide >= grid.Matrix.GetLength(0) || bottomSide < 0;
+
+                if (isHorizontalOutOfBounds && isVerticalOutOfBounds)
                 {
                     break;
                 }
 
-                if (topSide < grid.Matrix.GetLength(0) && bottomSide >= 0)
+                if (!isHorizontalOutOfBounds)
                 {
-                    if (grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor ||
-                        grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
-                    {
-                        return 0;
-                    }
+                    checkResult *= grid.Matrix[iCenter, rightSide].value * (grid.Matrix[iCenter, rightSide].color == matrixColor ? 1 : 0);
+                    checkResult *= grid.Matrix[iCenter, leftSide].value * (grid.Matrix[iCenter, leftSide].color == matrixColor ? 1 : 0);
                 }
 
-                if (rightSide < grid.Matrix.GetLength(0) && leftSide >= 0)
+                if (!isVerticalOutOfBounds)
                 {
-                    if (grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor ||
-                        grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
-                    {
-                        return 0;
-                    }
+                    checkResult *= grid.Matrix[topSide, jCenter].value * (grid.Matrix[topSide, jCenter].color == matrixColor ? 1 : 0);
+                    checkResult *= grid.Matrix[bottomSide, jCenter].value * (grid.Matrix[bottomSide, jCenter].color == matrixColor ? 1 : 0);
+                }
+
+                if (checkResult == 0)
+                {
+                    return 0;
                 }
             }
 
@@ -124,29 +131,24 @@ namespace GMI_Technical_Assessment.Code
                 int topSide = iCenter + step;
                 int bottomSide = iCenter - step;
 
-                if (topSide >= grid.Matrix.GetLength(0) && rightSide >= grid.Matrix.GetLength(1))
+                bool isHorizontalOutOfBounds = rightSide >= grid.Matrix.GetLength(0) || leftSide < 0;
+                bool isVerticalOutOfBounds = topSide >= grid.Matrix.GetLength(0) || bottomSide < 0;
+
+                if (isHorizontalOutOfBounds && isVerticalOutOfBounds)
                 {
                     break;
                 }
 
-                if (topSide < grid.Matrix.GetLength(0))
-                {
-                    grid.Matrix[topSide, jCenter].color = requiredColor;
-                }
-
-                if (bottomSide >= 0)
-                {
-                    grid.Matrix[bottomSide, jCenter].color = requiredColor;
-                }
-
-                if (rightSide < grid.Matrix.GetLength(0))
+                if (!isHorizontalOutOfBounds)
                 {
                     grid.Matrix[iCenter, rightSide].color = requiredColor;
+                    grid.Matrix[iCenter, leftSide].color = requiredColor;
                 }
 
-                if (leftSide >= 0)
+                if (!isVerticalOutOfBounds)
                 {
-                    grid.Matrix[iCenter, leftSide].color = requiredColor;
+                    grid.Matrix[topSide, jCenter].color = requiredColor;
+                    grid.Matrix[bottomSide, jCenter].color = requiredColor;
                 }
             }
         }
@@ -160,7 +162,10 @@ namespace GMI_Technical_Assessment.Code
 
         public override int FindMatches(Grid grid)
         {
-            if (grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0)
+            bool isGridSidesEven = grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0;
+            bool isGridTooSmall = grid.Matrix.GetLength(0) < 2 || grid.Matrix.GetLength(1) < 2;
+
+            if (isGridSidesEven || isGridTooSmall)
             {
                 return 0;
             }
@@ -168,8 +173,8 @@ namespace GMI_Technical_Assessment.Code
             int iCenter = grid.Matrix.GetLength(0) / 2;
             int jCenter = grid.Matrix.GetLength(1) / 2;
 
-            bool isHorizontalOut = false;
-            bool isVerticalOut = false;
+            int horizontalResult = 1;
+            int verticalResult = 1;
 
             for (int step = 0; ; step++)
             {
@@ -178,32 +183,33 @@ namespace GMI_Technical_Assessment.Code
                 int topSide = iCenter + step;
                 int bottomSide = iCenter - step;
 
-                if (topSide >= grid.Matrix.GetLength(0) && rightSide >= grid.Matrix.GetLength(1) ||
-                    isHorizontalOut && isVerticalOut)
+                bool isHorizontalOutOfBounds = rightSide >= grid.Matrix.GetLength(1) || leftSide < 0;
+                bool isVerticalOutOfBounds = topSide >= grid.Matrix.GetLength(0) || bottomSide < 0;
+
+                if (isHorizontalOutOfBounds && isVerticalOutOfBounds)
                 {
                     break;
                 }
 
-                if (topSide < grid.Matrix.GetLength(0) && bottomSide >= 0)
+                if (!isHorizontalOutOfBounds)
                 {
-                    if (grid.Matrix[topSide, jCenter].value == 0 || grid.Matrix[topSide, jCenter].color != matrixColor ||
-                        grid.Matrix[bottomSide, jCenter].value == 0 || grid.Matrix[bottomSide, jCenter].color != matrixColor)
-                    {
-                        isVerticalOut = true;
-                    }
+                    horizontalResult *= grid.Matrix[iCenter, rightSide].value * (grid.Matrix[iCenter, rightSide].color == matrixColor ? 1 : 0);
+                    horizontalResult *= grid.Matrix[iCenter, leftSide].value * (grid.Matrix[iCenter, leftSide].color == matrixColor ? 1 : 0);
                 }
 
-                if (rightSide < grid.Matrix.GetLength(0) && leftSide >= 0)
+                if (!isVerticalOutOfBounds)
                 {
-                    if (grid.Matrix[iCenter, rightSide].value == 0 || grid.Matrix[iCenter, rightSide].color != matrixColor ||
-                        grid.Matrix[iCenter, leftSide].value == 0 || grid.Matrix[iCenter, leftSide].color != matrixColor)
-                    {
-                        isHorizontalOut = true;
-                    }
+                    verticalResult *= grid.Matrix[topSide, jCenter].value * (grid.Matrix[topSide, jCenter].color == matrixColor ? 1 : 0);
+                    verticalResult *= grid.Matrix[bottomSide, jCenter].value * (grid.Matrix[bottomSide, jCenter].color == matrixColor ? 1 : 0);
+                }
+
+                if (horizontalResult == 0 && verticalResult == 0)
+                {
+                    return 0;
                 }
             }
 
-            if (!isVerticalOut && IsHorizontalSidesIsFilled(grid, out bool isBottom))
+            if (verticalResult == 1 && IsHorizontalSidesIsFilled(grid, out bool isBottom))
             {
                 TShapeSide shapeSide = isBottom ? TShapeSide.Buttom : TShapeSide.Top;
                 FillTShapeColor(grid, shapeSide);
@@ -212,7 +218,7 @@ namespace GMI_Technical_Assessment.Code
                 return 1;
             }
 
-            else if (!isHorizontalOut && IsVerticalSidesIsFilled(grid, out bool isRight))
+            else if (horizontalResult == 1 && IsVerticalSidesIsFilled(grid, out bool isRight))
             {
                 TShapeSide shapeSide = isRight ? TShapeSide.Right : TShapeSide.Left;
                 FillTShapeColor(grid, shapeSide);
@@ -229,18 +235,18 @@ namespace GMI_Technical_Assessment.Code
             int rightSide = 1;
             int leftSide = 1;
 
-            int horizontalSize = grid.Matrix.GetLength(1) - 1;
+            int horizontalMax = grid.Matrix.GetLength(1) - 1;
 
             for (int verticalIndex = 0; verticalIndex < grid.Matrix.GetLength(0); verticalIndex++)
             {
+                rightSide *= grid.Matrix[verticalIndex, horizontalMax].value * (grid.Matrix[verticalIndex, horizontalMax].color == matrixColor ? 1 : 0);
+                leftSide *= grid.Matrix[verticalIndex, 0].value * (grid.Matrix[verticalIndex, 0].color == matrixColor ? 1 : 0);
+
                 if (rightSide == 0 && leftSide == 0)
                 {
                     isRight = false;
                     return false;
                 }
-
-                rightSide *= grid.Matrix[verticalIndex, horizontalSize].value * (grid.Matrix[verticalIndex, horizontalSize].color == matrixColor ? 1 : 0);
-                leftSide *= grid.Matrix[verticalIndex, 0].value * (grid.Matrix[verticalIndex, 0].color == matrixColor ? 1 : 0);
             }
 
             isRight = rightSide == 1;
@@ -252,18 +258,18 @@ namespace GMI_Technical_Assessment.Code
             int topSide = 1;
             int bottomSide = 1;
 
-            int verticalSize = grid.Matrix.GetLength(0) - 1;
+            int verticalMax = grid.Matrix.GetLength(0) - 1;
 
             for (int horizontalIndex = 0; horizontalIndex < grid.Matrix.GetLength(1); horizontalIndex++)
             {
+                bottomSide *= grid.Matrix[verticalMax, horizontalIndex].value * (grid.Matrix[verticalMax, horizontalIndex].color == matrixColor ? 1 : 0);
+                topSide *= grid.Matrix[0, horizontalIndex].value * (grid.Matrix[0, horizontalIndex].color == matrixColor ? 1 : 0);
+
                 if (topSide == 0 && bottomSide == 0)
                 {
                     isDown = false;
                     return false;
                 }
-
-                topSide *= grid.Matrix[0, horizontalIndex].value * (grid.Matrix[0, horizontalIndex].color == matrixColor ? 1 : 0);
-                bottomSide *= grid.Matrix[verticalSize, horizontalIndex].value * (grid.Matrix[verticalSize, horizontalIndex].color == matrixColor ? 1 : 0);
             }
 
             isDown = bottomSide == 1;
@@ -352,13 +358,16 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
+            bool isPaternBiggerThanGrid = pattern.GetLength(0) > grid.Matrix.GetLength(0) || pattern.GetLength(1) > grid.Matrix.GetLength(1);
             bool isPatternCube = pattern.GetLength(0) == pattern.GetLength(1);
             bool hasPatternZero = HasPatternZero();
 
-            if (pattern.GetLength(0) <= grid.Matrix.GetLength(0) && pattern.GetLength(1) <= grid.Matrix.GetLength(1))
-                matches += FindHorizontalMatches(grid, hasPatternZero);
+            if (isPaternBiggerThanGrid)
+                return 0;
 
-            if (pattern.GetLength(0) <= grid.Matrix.GetLength(1) && pattern.GetLength(1) <= grid.Matrix.GetLength(0) && !isPatternCube)
+            matches += FindHorizontalMatches(grid, hasPatternZero);
+
+            if (!isPatternCube)
                 matches += FindVerticalMatches(grid, hasPatternZero);
 
             Console.WriteLine($"Debug -> {name} - {matches}");
@@ -372,7 +381,7 @@ namespace GMI_Technical_Assessment.Code
             {
                 for (int j = 0; j < pattern.GetLength(1); j++)
                 {
-                    if (pattern[i,j] == 0)
+                    if (pattern[i, j] == 0)
                         return true;
                 }
             }
@@ -384,21 +393,13 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
-            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
+            for (int i = 0; i + pattern.GetLength(0) <= grid.Matrix.GetLength(0); i++)
             {
-                if (i + pattern.GetLength(0) > grid.Matrix.GetLength(0))
-                    break;
-
-                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
+                for (int j = 0; j + pattern.GetLength(1) <= grid.Matrix.GetLength(1); j++)
                 {
-                    if (j + pattern.GetLength(1) > grid.Matrix.GetLength(1))
+                    if (IsPatternApplied(grid, i, j, flipCheck, true, out int flipIndex))
                     {
-                        break;
-                    }
-
-                    if (IsHorizontalPatternApplied(grid, i, j, flipCheck, out int flipIndex))
-                    {
-                        FillHorizontalShape(grid, i, j, flipIndex);
+                        FillShape(grid, i, j, flipIndex, true);
                         matches++;
 
                         j += pattern.GetLength(1) - 1;
@@ -413,21 +414,13 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
-            for (int i = 0; i < grid.Matrix.GetLength(1); i++)
+            for (int i = 0; i + pattern.GetLength(0) <= grid.Matrix.GetLength(1); i++)
             {
-                if (i + pattern.GetLength(0) > grid.Matrix.GetLength(1))
-                    break;
-
-                for (int j = 0; j < grid.Matrix.GetLength(0); j++)
+                for (int j = 0; j + pattern.GetLength(1) <= grid.Matrix.GetLength(0); j++)
                 {
-                    if (j + pattern.GetLength(1) > grid.Matrix.GetLength(0))
+                    if (IsPatternApplied(grid, i, j, flipCheck, false, out int flipIndex))
                     {
-                        break;
-                    }
-
-                    if (IsVerticalPatternApplied(grid, i, j, flipCheck, out int flipIndex))
-                    {
-                        FillVerticalShape(grid, i, j, flipIndex);
+                        FillShape(grid, i, j, flipIndex, false);
                         matches++;
 
                         j += pattern.GetLength(0) - 1;
@@ -438,77 +431,44 @@ namespace GMI_Technical_Assessment.Code
             return matches;
         }
 
-        private bool IsHorizontalPatternApplied(Grid grid, int iStart, int jStart, bool flipCheck, out int flipIndex)
+        private bool IsPatternApplied(Grid grid, int iStart, int jStart, bool flipCheck, bool isHorizontal, out int flipIndex)
         {
             int needFlips = flipCheck ? 4 : 1;
 
             for (flipIndex = 0; flipIndex < needFlips; flipIndex++)
             {
-                bool isPatternAppliable = true;
                 int[,] flipedPattern = GetFlipedPattern(flipIndex);
+                bool isPatternAppliable = CheckPattern(flipedPattern);
 
-                for (int iPattern = 0, iGrid = iStart; iPattern < flipedPattern.GetLength(0); iPattern++, iGrid++)
-                {
-                    isPatternAppliable = true;
-
-                    for (int jPattern = 0, jGrid = jStart; jPattern < flipedPattern.GetLength(1); jPattern++, jGrid++)
-                    {
-                        bool isCellSame = grid.Matrix[iGrid, jGrid].value == flipedPattern[iPattern, jPattern];
-
-                        if (!isCellSame || grid.Matrix[iGrid, jGrid].color != matrixColor)
-                        {
-                            isPatternAppliable = false;
-                            break;
-                        }
-                    }
-
-                    if (!isPatternAppliable)
-                        break;
-                }
-
-                if(isPatternAppliable)
+                if (isPatternAppliable)
                     return true;
             }
 
             return false;
-        }
 
-        private bool IsVerticalPatternApplied(Grid grid, int iStart, int jStart, bool flipCheck, out int flipIndex)
-        {
-            int needFlips = flipCheck ? 4 : 1;
-
-            for (flipIndex = 0; flipIndex < needFlips; flipIndex++)
+            bool CheckPattern(int[,] pattern)
             {
-                bool isPatternAppliable = true;
-                int[,] flipedPattern = GetFlipedPattern(flipIndex);
-
-                for (int jPattern = 0, jGrid = jStart; jPattern < flipedPattern.GetLength(1); jPattern++, jGrid++)
+                for (int i = 0; i < pattern.GetLength(0); i++)
                 {
-                    isPatternAppliable = true;
-
-                    for (int iPattern = 0, iGrid = iStart; iPattern < flipedPattern.GetLength(0); iPattern++, iGrid++)
+                    for (int j = 0; j < pattern.GetLength(1); j++)
                     {
-                        bool isCellSame = grid.Matrix[jGrid, iGrid].value == flipedPattern[iPattern, jPattern];
+                        int iGrid = isHorizontal ? iStart + i : jStart + j;
+                        int jGrid = isHorizontal ? jStart + j : iStart + i;
 
-                        if (!isCellSame || grid.Matrix[jGrid, iGrid].color != matrixColor)
+                        bool isCellSame = grid.Matrix[iGrid, jGrid].value == pattern[i, j];
+
+                        if (!isCellSame || grid.Matrix[iGrid, jGrid].color != matrixColor)
                         {
-                            isPatternAppliable = false;
-                            break;
+                            return false;
                         }
                     }
-
-                    if (!isPatternAppliable)
-                        break;
                 }
 
-                if (isPatternAppliable)
-                    return true;
-                }
-
-            return false;
+                return true;
+            }
         }
 
-        private void FillHorizontalShape(Grid grid, int iStart, int jStart, int flipIndex)
+        private void FillShape(Grid grid, int iStart, int jStart, int flipIndex, bool isHorizontal)
         {
             int[,] flipedPattern = GetFlipedPattern(flipIndex);
 
@@ -516,25 +476,12 @@ namespace GMI_Technical_Assessment.Code
             {
                 for (int j = 0; j < pattern.GetLength(1); j++)
                 {
-                    if (grid.Matrix[iStart + i, jStart + j].value == 1)
-                    {
-                        grid.Matrix[iStart + i, jStart + j].color = requiredColor;
-                    }
-                }
-            }
-        }
+                    int iGrid = isHorizontal ? iStart + i : jStart + j;
+                    int jGrid = isHorizontal ? jStart + j : iStart + i;
 
-        private void FillVerticalShape(Grid grid, int iStart, int jStart, int flipIndex)
-        {
-            int[,] flipedPattern = GetFlipedPattern(flipIndex);
-
-            for (int j = 0; j < flipedPattern.GetLength(1); j++)
-            {
-                for (int i = 0; i < flipedPattern.GetLength(0); i++)
-                {
-                    if (grid.Matrix[jStart + j, iStart + i].value == 1)
+                    if (grid.Matrix[iGrid, jGrid].value == 1)
                     {
-                        grid.Matrix[jStart + j, iStart + i].color = requiredColor;
+                        grid.Matrix[iGrid, jGrid].color = requiredColor;
                     }
                 }
             }

@@ -15,6 +15,7 @@ namespace GMI_Technical_Assessment
         static void Main(string[] args)
         {
             TestRun();
+            //RandomTestRun();
             RandomRun();
         }
 
@@ -159,6 +160,9 @@ namespace GMI_Technical_Assessment
                     int height = random.Next(1, 20);
                     int width = random.Next(1, 20);
 
+                    //int height = 3;
+                    //int width = 3;
+
                     Grid grid = GridLoader.GetRandomized(height, width, fillPercent);
                     grid.SetColor(DEFAULT_DIGIT_COLOR);
 
@@ -180,6 +184,45 @@ namespace GMI_Technical_Assessment
                 }
 
 
+            }while(true);
+        }
+
+        static void RandomTestRun()
+        {
+            GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
+            int fillPercent = 50;
+
+            do
+            {
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+
+                if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("\x1b[3J");
+
+                        Random random = new Random();
+                        int height = random.Next(1, 20);
+                        int width = random.Next(1, 20);
+
+                        Grid grid = GridLoader.GetRandomized(height, width, fillPercent);
+                        grid.SetColor(DEFAULT_DIGIT_COLOR);
+
+                        if (grid != null)
+                        {
+                            Console.WriteLine($"#{i + 1}");
+                            Console.WriteLine($"MATRIX SIZE -> {height} : {width}");
+                            gridAnalyzer.Analyze(grid);
+                            //Console.WriteLine("");
+                            //grid.DisplayMatrix();
+                            //Console.WriteLine("");
+                            //gridAnalyzer.DisplayResult();
+                            //Console.WriteLine($"Fill percent: {fillPercent}");
+                        }
+                    }
+                }
             }while(true);
         }
     }

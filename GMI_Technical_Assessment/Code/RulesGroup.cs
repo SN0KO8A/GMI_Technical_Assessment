@@ -27,7 +27,7 @@ namespace GMI_Technical_Assessment.Code
             SetRulesRequiredColor(formationColor);
         }
 
-        public virtual void FindMatches(Grid grid)
+        public virtual int FindMatches(Grid grid)
         {
             matchesCount = 0;
 
@@ -35,6 +35,8 @@ namespace GMI_Technical_Assessment.Code
             {
                 matchesCount += rule.FindMatches(grid);
             }
+
+            return matchesCount;
         }
 
         public virtual void DisplayResult()

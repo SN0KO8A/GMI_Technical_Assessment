@@ -14,9 +14,8 @@ namespace GMI_Technical_Assessment
 
         static void Main(string[] args)
         {
-            TestRun();
-            //RandomTestRun();
-            RandomRun();
+            string path = "E:\\ProgramProjects\\GMI_Technical_Assessment\\GMI_Technical_Assessment\\Tests\\";
+            TestRun(path);
         }
 
         private static GridAnalyzer GetCurrentGridAnalyzer()
@@ -102,128 +101,102 @@ namespace GMI_Technical_Assessment
                     }
                 );
 
-            GridAnalyzer gridAnalyzer = new GridAnalyzer(new MatchFormations[]
-            {
-                multicolorFormation,
-                propellerFormation,
-                greenThreeFormation,
-                unmatchedFormation,
-            });
+            GridAnalyzer gridAnalyzer = new GridAnalyzer(
+                new MatchFormations[]
+                    {
+                        multicolorFormation,
+                        propellerFormation,
+                        greenThreeFormation,
+                        unmatchedFormation,
+                    }
+            );
 
             return gridAnalyzer;
         }
 
-        static void TestRun()
+        static MatchTest[] GetTests()
         {
-            Grid grid = GridLoader.LoadFromFile("test.txt");
-            grid.SetColor(DEFAULT_DIGIT_COLOR);
-
-            GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
-
-            if (grid != null)
-            {
-                gridAnalyzer.Analyze(grid);
-                Console.WriteLine("");
-                grid.DisplayMatrix();
-                Console.WriteLine("");
-                gridAnalyzer.DisplayResult();
-            }
+            return new MatchTest[]
+                {
+                    new MatchTest("M"),
+                    new MatchTest("P"),
+                    new MatchTest("G"),
+                    new MatchTest("U"),
+                };
         }
 
-        static void RandomRun()
+        static void TestRun(string testFolderPath)
         {
-            GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
-            int fillPercent = 50;
+            string[] allTestFiles = Directory.GetFiles(testFolderPath, "*.txt", SearchOption.AllDirectories);
 
-            do
+            int currentFileIndex = 0;
+
+            Console.WriteLine("Esc - Exit");
+            Console.WriteLine("Enter - Next File");
+            Console.WriteLine("R - Run till the test fail");
+            Console.WriteLine("");
+
+            bool fullRun = false;
+
+            while (true)
             {
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                ConsoleKeyInfo keyInfo = default;
 
-                if (keyInfo.Key == ConsoleKey.Enter || keyInfo.Key == ConsoleKey.RightArrow || keyInfo.Key == ConsoleKey.LeftArrow)
+                if (!fullRun)
+                    keyInfo = Console.ReadKey(true);
+
+                if (keyInfo.Key == ConsoleKey.Escape || currentFileIndex >= allTestFiles.Length)
+                    break;
+
+                if (keyInfo.Key == ConsoleKey.R)
+                    fullRun = true;
+
+                Console.Clear();
+                Console.WriteLine("\x1b[3J");
+                Console.WriteLine("Esc - Exit");
+                Console.WriteLine("Enter - Next File");
+                Console.WriteLine("R - Run till the test fail");
+                Console.WriteLine("");
+                Console.WriteLine($"FILES {currentFileIndex + 1}/{allTestFiles.Length}");
+
+                if (keyInfo.Key == ConsoleKey.Enter || fullRun)
                 {
-                    Console.Clear();
-                    Console.WriteLine("\x1b[3J");
+                    string fileName = allTestFiles[currentFileIndex];
 
-                    if (keyInfo.Key == ConsoleKey.RightArrow)
-                    {
-                        fillPercent += 5;
-                        fillPercent = fillPercent > 100 ? 100 : fillPercent;
-                    }
+                    Grid grid = GridLoader.LoadFromFile(fileName);
+                    GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
+                    MatchTest[] tests = GetTests();
 
-                    if(keyInfo.Key == ConsoleKey.LeftArrow)
-                    {
-                        fillPercent -= 5;
-                        fillPercent = fillPercent < 0 ? 0 : fillPercent;
-                    }
-
-                    Random random = new Random();
-                    int height = random.Next(1, 20);
-                    int width = random.Next(1, 20);
-
-                    //int height = 3;
-                    //int width = 3;
-
-                    Grid grid = GridLoader.GetRandomized(height, width, fillPercent);
                     grid.SetColor(DEFAULT_DIGIT_COLOR);
+
+                    tests = GridLoader.FillTests(tests, fileName);
+                    gridAnalyzer.MatchTests = tests;
 
                     if (grid != null)
                     {
-                        Console.WriteLine($"MATRIX SIZE -> {height} : {width}");
-                        gridAnalyzer.Analyze(grid);
-                        Console.WriteLine("");
-                        grid.DisplayMatrix();
-                        Console.WriteLine("");
-                        gridAnalyzer.DisplayResult();
-                        Console.WriteLine($"Fill percent: {fillPercent}");
+                        Console.WriteLine("FILE NAME: " + fileName);
+
+                        if (!gridAnalyzer.TestAnalyze(grid))
+                            fullRun = false;
+
+                        if(!fullRun)
+                            DisplayGrid(grid, gridAnalyzer);
                     }
+
+                    currentFileIndex++;
                 }
+            }
 
-                if(keyInfo.Key == ConsoleKey.Escape)
-                {
-                    break;
-                }
-
-
-            }while(true);
+            Console.WriteLine("Finished!");
         }
 
-        static void RandomTestRun()
+        private static void DisplayGrid(Grid grid, GridAnalyzer gridAnalyzer)
         {
-            GridAnalyzer gridAnalyzer = GetCurrentGridAnalyzer();
-            int fillPercent = 50;
-
-            do
-            {
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-
-                if (keyInfo.Key == ConsoleKey.Enter)
-                {
-                    for (int i = 0; i < 10000; i++)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("\x1b[3J");
-
-                        Random random = new Random();
-                        int height = random.Next(1, 20);
-                        int width = random.Next(1, 20);
-
-                        Grid grid = GridLoader.GetRandomized(height, width, fillPercent);
-                        grid.SetColor(DEFAULT_DIGIT_COLOR);
-
-                        if (grid != null)
-                        {
-                            Console.WriteLine($"#{i + 1}");
-                            Console.WriteLine($"MATRIX SIZE -> {height} : {width}");
-                            gridAnalyzer.Analyze(grid);
-                            //Console.WriteLine("");
-                            //grid.DisplayMatrix();
-                            //Console.WriteLine("");
-                            //gridAnalyzer.DisplayResult();
-                            //Console.WriteLine($"Fill percent: {fillPercent}");
-                        }
-                    }
-                }
-            }while(true);
+            Console.WriteLine("");
+            grid.DisplayMatrix();
+            Console.WriteLine("");
+            gridAnalyzer.DisplayTestResult();
+            Console.WriteLine("");
         }
     }
 }

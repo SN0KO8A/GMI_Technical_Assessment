@@ -55,7 +55,7 @@ namespace GMI_Technical_Assessment.Code
                 }
             }
 
-            Console.WriteLine($"Debug -> Unmatched - {matchesCount}");
+            //Console.WriteLine($"Debug -> Unmatched - {matchesCount}");
             return matchesCount;
         }
     }
@@ -118,7 +118,7 @@ namespace GMI_Technical_Assessment.Code
 
             FillColorCross(grid, iCenter, jCenter);
 
-            Console.WriteLine($"Debug -> CrossShape - 1");
+            //Console.WriteLine($"Debug -> CrossShape - 1");
             return 1;
         }
 
@@ -164,10 +164,11 @@ namespace GMI_Technical_Assessment.Code
 
         public override int FindMatches(Grid grid)
         {
-            bool isGridSidesEven = grid.Matrix.GetLength(0) % 2 == 0 || grid.Matrix.GetLength(1) % 2 == 0;
+            bool isVerticalSideEven = grid.Matrix.GetLength(0) % 2 == 0;
+            bool isHorizontalSideEven = grid.Matrix.GetLength(1) % 2 == 0;
             bool isGridTooSmall = grid.Matrix.GetLength(0) < 2 || grid.Matrix.GetLength(1) < 2;
 
-            if (isGridSidesEven || isGridTooSmall)
+            if (isVerticalSideEven && isHorizontalSideEven || isGridTooSmall)
             {
                 return 0;
             }
@@ -193,14 +194,14 @@ namespace GMI_Technical_Assessment.Code
                     break;
                 }
 
-                if (!isHorizontalOut)
+                if (!isHorizontalOut && !isVerticalSideEven)
                 {
                     //If value is zero or grid cell is colored
                     horizontalResult *= grid.Matrix[iCenter, rightSide].value * (grid.Matrix[iCenter, rightSide].color == matrixColor ? 1 : 0);
                     horizontalResult *= grid.Matrix[iCenter, leftSide].value * (grid.Matrix[iCenter, leftSide].color == matrixColor ? 1 : 0);
                 }
 
-                if (!isVerticalOut)
+                if (!isVerticalOut && !isHorizontalSideEven)
                 {
                     //If value is zero or grid cell is colored
                     verticalResult *= grid.Matrix[topSide, jCenter].value * (grid.Matrix[topSide, jCenter].color == matrixColor ? 1 : 0);
@@ -213,21 +214,21 @@ namespace GMI_Technical_Assessment.Code
                 }
             }
 
-            if (verticalResult == 1 && IsHorizontalSidesIsFilled(grid, out bool isBottom))
+            if (verticalResult == 1 && IsHorizontalSidesIsFilled(grid, out bool isBottom) && !isHorizontalSideEven)
             {
                 TShapeSide shapeSide = isBottom ? TShapeSide.Buttom : TShapeSide.Top;
                 FillTShapeColor(grid, shapeSide);
 
-                Console.WriteLine($"Debug -> TShape - 1");
+                //Console.WriteLine($"Debug -> TShape - 1");
                 return 1;
             }
 
-            else if (horizontalResult == 1 && IsVerticalSidesIsFilled(grid, out bool isRight))
+            else if (horizontalResult == 1 && IsVerticalSidesIsFilled(grid, out bool isRight) && !isVerticalSideEven)
             {
                 TShapeSide shapeSide = isRight ? TShapeSide.Right : TShapeSide.Left;
                 FillTShapeColor(grid, shapeSide);
 
-                Console.WriteLine($"Debug -> TShape - 1");
+                //Console.WriteLine($"Debug -> TShape - 1");
                 return 1;
             }
 
@@ -372,7 +373,7 @@ namespace GMI_Technical_Assessment.Code
             if (!isPatternCube)
                 matches += FindVerticalMatches(grid, hasPatternZero);
 
-            Console.WriteLine($"Debug -> {name} - {matches}");
+            //Console.WriteLine($"Debug -> {name} - {matches}");
 
             return matches;
         }

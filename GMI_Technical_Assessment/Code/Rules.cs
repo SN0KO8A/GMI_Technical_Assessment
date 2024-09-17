@@ -386,8 +386,6 @@ namespace GMI_Technical_Assessment.Code
 
                         bool isAvaiableForHorizontal = j + pattern.Width() <= grid.Matrix.GetLength(1) &&
                             i + pattern.Height() <= grid.Matrix.GetLength(0);
-                        bool isAvaiableForVertical = j + pattern.Height() <= grid.Matrix.GetLength(1) &&
-                            i + pattern.Width() <= grid.Matrix.GetLength(0);
 
                         if (isAvaiableForHorizontal)
                         {
@@ -399,6 +397,9 @@ namespace GMI_Technical_Assessment.Code
                                 j += pattern.Width() - 1;
                             }
                         }
+
+                        bool isAvaiableForVertical = j + pattern.Height() <= grid.Matrix.GetLength(1) &&
+                            i + pattern.Width() <= grid.Matrix.GetLength(0);
 
                         if (isAvaiableForVertical)
                         {

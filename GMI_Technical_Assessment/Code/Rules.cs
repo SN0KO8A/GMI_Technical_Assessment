@@ -365,17 +365,14 @@ namespace GMI_Technical_Assessment.Code
         {
             int matches = 0;
 
-            matches += FindHorizontalMatches(grid);
-            //matches += FindVerticalMatches(grid);
-
-            //Console.WriteLine($"Debug -> {name} - {matches}");
+            matches += FindAllPossibleMatches(grid);
 
             return matches;
         }
 
 
 
-        private int FindHorizontalMatches(Grid grid)
+        private int FindAllPossibleMatches(Grid grid)
         {
             int matches = 0;
 
@@ -412,36 +409,6 @@ namespace GMI_Technical_Assessment.Code
 
                                 j += pattern.Height() - 1;
                             }
-                        }
-                    }
-                }
-            }
-
-            return matches;
-        }
-
-        private int FindVerticalMatches(Grid grid, bool flipCheck)
-        {
-            int matches = 0;
-
-            for (int i = 0; i < grid.Matrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < grid.Matrix.GetLength(1); j++)
-                {
-                    for (int patternIndex = 0; patternIndex < patterns.Length; patternIndex++)
-                    {
-                        Pattern pattern = patterns[patternIndex];
-
-                        if (j + pattern.Height() > grid.Matrix.GetLength(1) ||
-                            i + pattern.Width() > grid.Matrix.GetLength(0))
-                            continue;
-
-                        if (IsPatternApplied(grid, pattern, i, j, true))
-                        {
-                            FillShape(grid, pattern, i, j, true);
-                            matches++;
-
-                            j += pattern.Height() - 1;
                         }
                     }
                 }

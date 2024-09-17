@@ -32,9 +32,11 @@ namespace GMI_Technical_Assessment
                         new ShapeRule(
                             DEFAULT_DIGIT_COLOR,
                             "Straight Line of 5",
-                            new int[,]
-                            {
-                                { 1, 1, 1, 1, 1},
+                            new Pattern[]{
+                                new Pattern(new int[,]
+                                {
+                                    { 1, 1, 1, 1, 1},
+                                }),
                             }),
                     }
                 );
@@ -49,27 +51,23 @@ namespace GMI_Technical_Assessment
                         new ShapeRule(
                             DEFAULT_DIGIT_COLOR,
                             "Double Layer",
-                            new int[,]
-                            {
-                                { 1, 1, 1},
-                                { 1, 1, 1},
-                            }),
-                        new ShapeRule(
-                            DEFAULT_DIGIT_COLOR,
-                            "T Shape (alternative)",
-                            new int[,]
-                            {
-                                { 1, 1, 1},
-                                { 1, 1, 0},
-                            }),
-                        new ShapeRule(
-                            DEFAULT_DIGIT_COLOR,
-                            "2x2 Block",
-                            new int[,]
-                            {
-                                { 1, 1},
-                                { 1, 1},
-                            }),
+                            new Pattern[]{
+                                new Pattern(new int[,]
+                                {
+                                    { 1, 1, 1},
+                                    { 1, 1, 1},
+                                }),
+                                new Pattern(new int[,]
+                                {
+                                    { 1, 1, 1},
+                                    { 1, 1, 0},
+                                }),
+                                new Pattern(new int[,]
+                                {
+                                    { 1, 1},
+                                    { 1, 1},
+                                }),
+                            })
                     }
                 );
 
@@ -83,9 +81,11 @@ namespace GMI_Technical_Assessment
                         new ShapeRule(
                             DEFAULT_DIGIT_COLOR,
                             "Straight Line of 3",
-                            new int[,]
-                            {
-                                { 1, 1, 1},
+                            new Pattern[]{
+                                new Pattern(new int[,]
+                                {
+                                    { 1, 1, 1},
+                                })
                             })
                     }
                 );

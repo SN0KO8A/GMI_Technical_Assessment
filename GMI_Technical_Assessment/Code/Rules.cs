@@ -554,13 +554,5 @@ namespace GMI_Technical_Assessment.Code
 
             return false;
         }
-
-        public bool IsPointInArea(int x, int y)
-        {
-            bool xWithinArea = x >= this.x && x < this.x + Width();
-            bool yWithinArea = x >= this.y && y < this.y + Height();
-
-            return xWithinArea && yWithinArea;
-        }
     }
 }
